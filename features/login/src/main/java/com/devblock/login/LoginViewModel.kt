@@ -47,24 +47,23 @@ internal class LoginViewModel @Inject constructor(
     ) {
 
 
-            var errorMessage: Int = R.string.empty
-
             if (userName?.isEmpty()){
-                errorMessage = R.string.login_error_username_empty
-                _state.value = LoginState.Fail(context.getString(errorMessage))
+                _state.value = LoginState.Fail(context.getString(R.string.login_error_username_empty))
                 return
             }
             if (password?.isEmpty()){
-                errorMessage = R.string.login_error_password_empty
-                _state.value = LoginState.Fail(context.getString(errorMessage))
+
+                _state.value = LoginState.Fail(context.getString(R.string.login_error_password_empty))
                 return
 
             }
 
 
-         if(userName != "devblock" && password != "2021") {
-             errorMessage = R.string.login_error_incorrect
-             _state.value = LoginState.Fail(context.getString(errorMessage))
+         if(userName == "devblock" && password == "2021") {
+
+         }else {
+             _state.value = LoginState.Fail(context.getString(R.string.login_error_incorrect))
+
              return
          }
 
@@ -84,7 +83,7 @@ internal class LoginViewModel @Inject constructor(
                 )
 
                 _state.value = LoginState.Success
-                navigator.goTo(Destination.LoginTarget)
+                navigator.goTo(Destination.Welcome)
 
         }
     }

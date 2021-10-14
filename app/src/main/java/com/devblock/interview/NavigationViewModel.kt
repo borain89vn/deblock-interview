@@ -106,7 +106,7 @@ internal class NavigationViewModel @Inject constructor(
                             .build()
                     )
                 } else {
-                    navController.navigateUp()
+                   navController.navigateUp()
                 }
             }
         }
