@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+  <data>
+    <variable
+        name="viewmodel"
+        type="com.devblock.login.LoginViewModel" />
+  </data>
+  
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/teal_200"
+    >
+
+
+  <androidx.appcompat.widget.AppCompatImageView
+      android:layout_width="100dp"
+      android:layout_height="100dp"
+      android:layout_marginTop="32dp"
+      app:srcCompat="@drawable/icon_logo"
+      />
+
+
+  <androidx.appcompat.widget.AppCompatEditText
+
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/dp_50"
+      android:layout_marginLeft="@dimen/dp_50"
+      android:layout_marginRight="@dimen/dp_50"
+      android:layout_marginTop="32dp"
+      android:hint="@string/login_field_username"
+      android:text="@={viewmodel.userName}"
+      android:gravity="center_vertical"
+      android:paddingLeft="16dp"
+      android:background="@drawable/bg_edt"
+      />
+  <androidx.appcompat.widget.AppCompatEditText
+
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/dp_50"
+      android:layout_marginLeft="@dimen/dp_50"
+      android:layout_marginRight="@dimen/dp_50"
+      android:layout_marginTop="32dp"
+      android:hint="@string/login_field_password"
+      android:inputType="textPassword"
+      android:text="@={viewmodel.password}"
+      android:gravity="center_vertical"
+      android:paddingLeft="16dp"
+      android:background="@drawable/bg_edt"
+      />
+  <Button
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/dp_50"
+      android:layout_marginLeft="@dimen/dp_50"
+      android:layout_marginRight="50dp"
+      android:layout_marginTop="32dp"
+      android:text="@string/login_button_sign_in"
+      android:textColor="@color/white"
+
+      android:background="@drawable/bg_btn"
+      app:oneClick="@{()->viewmodel.login(viewmodel.userName,viewmodel.password)}"
+      />
+</LinearLayout>
+</layout>

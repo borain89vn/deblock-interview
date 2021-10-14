@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.devblock.network.api.response.ContactItemResp" />
+
+        <variable
+            name="viewModel"
+            type="com.devblock.welcome.WelcomeViewModel" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    oneClick="@{()->viewModel.onItemClicked(item)}"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/avatar_image"
+        android:layout_width="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@color/black"
+        srcImageUrl="@{item.avatar}"
+
+        android:layout_height="100dp"/>
+    <TextView
+        android:id="@+id/name_text"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        tools:text="le trung thuc"
+        android:text='@{item.fullName()}'
+        android:textSize="18sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toEndOf="@id/avatar_image"
+        app:layout_constraintTop_toTopOf="@id/avatar_image"
+        />
+    <TextView
+        android:id="@+id/email_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="16dp"
+        android:text="@{item.email}"
+        tools:text="trungthuc89@gmail.com"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@id/avatar_image"
+        app:layout_constraintBottom_toBottomOf="@id/avatar_image"
+
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

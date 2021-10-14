@@ -1,0 +1,33 @@
+<resources>
+    <string name="empty"></string>
+    <string name="login_toolbar_title">Login</string>
+    <string name="login_field_username">User Name</string>
+    <string name="login_field_password">Password</string>
+    <string name="login_button_sign_in">Sign In</string>
+    <string name="login_error_username_empty">Please Input User Name</string>
+    <string name="login_error_password_empty">Please Input Password</string>
+    <string name="login_error_incorrect">User name or password is incorrect</string>
+
+    <string name="welcome_toolbar_title">Welcome %1$s</string>
+    <string name="welcome_friend_list">Friend List/Contact List</string>
+    <string name="contact_toolbar_title">Contact</string>
+    <string name="contact_update_button">Update</string>
+    <string name="contact_update_success">Update Success</string>
+    <string name="contact_update_fail">Field can not be empty</string>
+
+    <string name="alert_ok_button">Ok</string>
+    <string name="alert_cancel_button">Cancel</string>
+
+
+    <string name="auth_field_error_empty">Field can not be empty</string>
+    <string name="auth_field_error_incorrect_email">Email is incorrect</string>
+    <string name="auth_field_error_incorrect_password">Password is incorrect</string>
+    <string name="auth_field_error_letters_allowed">Letter Only</string>
+    <string name="auth_error_incorrect_data">Incorrect login or password</string>
+
+    <string name="message_network_timeout">Error. Please try later </string>
+    <string name="message_network_error">No internet access. Please try later</string>
+    <string name="message_unknown_error">Something went wrong. We are already working on it.</string>
+
+
+</resources>

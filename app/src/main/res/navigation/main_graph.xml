@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.devblock.splash.SplashFragment"
+        android:label="SplashFragment" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.devblock.login.LoginFragment"
+        android:label="LoginFragment"
+        />
+    <action
+        android:id="@+id/toLogin"
+        app:destination="@id/loginFragment"
+        app:popUpToInclusive="true"
+        />
+
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.devblock.welcome.WelcomeFragment"
+        android:label="MainFragment" />
+    <action
+        android:id="@+id/toWelcome"
+        app:destination="@id/welcomeFragment" />
+
+
+    <fragment
+        android:id="@+id/contactFragment"
+        android:name="com.devblock.contact.ContactFragment"
+        android:label="CategoryFragment" />
+    <action
+        android:id="@+id/toContact"
+        app:destination="@id/contactFragment">
+        <argument
+            android:name="id"
+            app:argType="string" />
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="email"
+            app:argType="string"
+            />
+        <argument
+            android:name="avatar"
+            app:argType="string"
+            />
+    </action>
+
+</navigation>
