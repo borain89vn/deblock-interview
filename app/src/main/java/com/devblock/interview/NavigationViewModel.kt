@@ -70,6 +70,9 @@ internal class NavigationViewModel @Inject constructor(
                 if (currentDestination == R.id.splashFragment) {
                     navController.popBackStack()
                 }
+                if (currentDestination == R.id.loginFragment) {
+                    navController.popBackStack()
+                }
                 navController.navigate(MainGraphDirections.toWelcome(), navOptions)
             }
 
