@@ -56,5 +56,8 @@ object Libs {
     const val GLIDE_COMPILER = "com.github.bumptech.glide:compiler:${Versions.GLIDE}"
     const val CIRCLE_IMAGEVIEW = "de.hdodenhof:circleimageview:${Versions.CIRCLE_IMAGEVIEW}"
 
+    const val FIREBASE_BOM = "com.google.firebase:firebase-bom:27.1.0"
+    const val FIREBASE_MESSAGING = "com.google.firebase:firebase-messaging"
+
 
 }
