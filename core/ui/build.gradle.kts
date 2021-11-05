@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":core:utils"))
     implementation(Libs.ANDROID_CORE)
     implementation(Libs.ANDROID_APPCOMPAT)
     implementation(Libs.ANDROID_MATERIAL)
@@ -12,6 +13,7 @@ dependencies {
     implementation(Libs.GLIDE_COMPILER)
     implementation(Libs.ANDROID_FRAGMENT)
     implementation(Libs.LIFECYCLE_VIEWMODEL)
+    api ("androidx.paging:paging-runtime-ktx:3.0.0-alpha13")
 
 
     implementation(Libs.DAGGER_HILT)

@@ -13,7 +13,7 @@ internal abstract class ProfileDao {
             FROM profile
         """
     )
-    abstract fun profile(): Profile?
+    abstract suspend fun profile(): Profile?
 
     @Transaction
     open suspend fun updateProfile(profile: Profile){

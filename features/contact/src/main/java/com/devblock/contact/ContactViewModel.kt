@@ -5,18 +5,15 @@ import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.*
 import androidx.savedstate.SavedStateRegistryOwner
-import com.devblock.BaseViewModel
-import com.devblock.contact.model.ContactState
+import com.devblock.base.BaseViewModel
 import com.devblock.db.api.ContactRepository
 import com.devblock.db.api.models.Contact
 import com.devblock.navigation.Navigator
 import com.devblock.utils.AppException
-import com.devblock.utils.extensions.getEmailErrorOrNull
 import com.devblock.utils.extensions.isEmailValid
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import java.util.*
@@ -36,9 +33,6 @@ internal class ContactViewModel @Inject constructor(
     private val contactRepository: ContactRepository
 ) : BaseViewModel() {
 
-    private val _state = MutableLiveData<ContactState>()
-    val state: LiveData<ContactState>
-        get() = _state
 
     val userName: MutableLiveData<String> = MutableLiveData("")
     val userEmail: MutableLiveData<String?> = MutableLiveData("")
@@ -49,11 +43,10 @@ internal class ContactViewModel @Inject constructor(
         mediator.addSource(userEmail){}
         userEmail.value = email
         userName.value = name
+        _state.value  = ContactState.Contact(name, email,avatar)
     }
 
-    fun onViewInitialized() {
-       _state.value  = ContactState.Contact(name, email,avatar)
-    }
+
     fun backClick() {
         navigator.back()
     }
@@ -73,7 +66,7 @@ internal class ContactViewModel @Inject constructor(
     fun updateClick() {
         if (!isValidInput()) return
 
-        uiScope?.launch(handlerException) {
+        viewModelScope?.launch(handlerException) {
             val contact = Contact(id,userEmail.value,userName.value,avatar, Date().time)
              contactRepository.addToContact(contact)
             _state.value = ContactState.UpdateSuccess(context.getString(R.string.contact_update_success))

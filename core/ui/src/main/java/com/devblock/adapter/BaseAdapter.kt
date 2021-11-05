@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.devblock.BaseViewModel
+import com.devblock.base.BaseViewModel
 import com.devblock.ui.BR
 
 
@@ -27,33 +27,27 @@ import com.devblock.ui.BR
  * to access binding class outside of [BaseAdapter].
  *
  */
-abstract class BaseAdapter<T, B : ViewDataBinding>(
-        private var itemBindingId: Int = BR.item,
-        private var viewModelBindingId: Int = BR.viewModel,
-        private var viewModel: BaseViewModel?,
-        var items: List<T>,
-        var onBind: B.(Int) -> Unit = {}, var listener: OnItemClickListener<T>? = null
+abstract class BaseAdapter<T : Any, B : ViewDataBinding>(
+    private val itemBindingId: Int = BR.item,
+    items: List<T> = emptyList(),
+    private val onItemClicked: ((T) -> Unit)? = null,
+    private val onBind: B.(Int) -> Unit = {}
 ) : RecyclerView.Adapter<BaseViewHolder<T, B>>() {
+    private val items = mutableListOf<T>().apply {
+        addAll(items)
+    }
 
     /**
      * get item at given position
      */
-
-
-    protected fun isPositionFooter(position: Int): Boolean {
-        return position > items.size
-    }
-
     fun getItem(position: Int): T = items[position]
 
-
-    override fun getItemCount(): Int  = items.size
-
+    override fun getItemCount(): Int = items.size
 
     /**
      * abstract function to decide which layout should be shown at given position.
      * This will be useful for multi layout adapters. for single layout adapter it can only returns
-     * initView static layout resource id.
+     * a static layout resource id.
      *
      * @return relevant layout resource id based on given position
      *
@@ -67,12 +61,11 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
      * @see [RecyclerView.Adapter.getItemViewType]
      */
     override fun getItemViewType(position: Int): Int {
-
         return getLayoutId(position)
     }
 
     /**
-     * Attempt to create an instance of [MvvmViewHolder] with inflated Binding class
+     * Attempt to create an instance of [BaseViewHolder] with inflated Binding class
      *
      * @param viewType will be used as layoutId for [DataBindingUtil] and will be provided by [getItemViewType]
      *
@@ -87,37 +80,12 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
     /**
      * Attempt to bind item at given position to holder.
      * And also attempts to invoke [onBind] lambda
-     * function on instance of [B] in [MvvmViewHolder.binding].
+     * function on instance of [B] in [BaseViewHolder.binding].
      *
      * @see [RecyclerView.Adapter.onBindViewHolder]
      */
     override fun onBindViewHolder(holder: BaseViewHolder<T, B>, position: Int) {
-        if (position == items.size) {
-            if (items.isEmpty()) {
-                holder.bind(viewModelBindingId, viewModel)
-                holder.binding.onBind(position)
-            }
-            return
-        }
-        listener?.let {
-
-
-            val root = holder.binding.root
-            if(root is ViewGroup) {
-                root.forEach {
-                    it.setOnClickListener {
-                        listener?.onItemClick(it, items[position], position)
-                    }
-                }
-            }
-
-            root.setOnClickListener {
-               listener?.onItemClick(it, items[position], position)
-            }
-
-        }
-
-        holder.bind(itemBindingId, getItem(position), viewModelBindingId, viewModel)
+        holder.bind(itemBindingId, getItem(position))
         holder.binding.onBind(position)
     }
 
@@ -128,34 +96,21 @@ abstract class BaseAdapter<T, B : ViewDataBinding>(
     open fun swapItems(newItems: List<T>) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-                    items[oldItemPosition] == newItems[newItemPosition]
+                items[oldItemPosition] == newItems[newItemPosition]
 
             override fun getOldListSize(): Int =
-                    items.size
+                items.size
 
             override fun getNewListSize(): Int =
-                    newItems.size
+                newItems.size
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-                    items[oldItemPosition] == newItems[newItemPosition]
+                items[oldItemPosition] == newItems[newItemPosition]
         })
         diffResult.dispatchUpdatesTo(this)
-
-        // newItems.toList() provide initView new instance of list with different reference in memory
-        // to prevent same instance of objects issues
-        items = newItems.toList()
-        notifyDataSetChanged()
+        items.clear()
+        items.addAll(newItems)
     }
-
-    /**
-     * A default interface that can be used as click listener of items
-     */
-    interface OnItemClickListener<T> {
-        fun onItemClick(view: View, item: T, position: Int = -1)
-    }
-
-
-
 }
 
 

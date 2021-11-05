@@ -12,7 +12,7 @@ internal class DefaultProfileRepository @Inject constructor(
     private val profileDao: ProfileDao
 ) : ProfileRepository {
 
-    override fun profile(): Profile? = profileDao?.profile()
+    override suspend fun profile(): Profile? = profileDao?.profile()
 
     override suspend fun updateProfile(profile: Profile) =
         withContext(Dispatchers.IO) {

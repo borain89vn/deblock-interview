@@ -1,10 +1,12 @@
 package com.devblock.network.api
 
+import androidx.paging.PagingData
 import com.devblock.network.api.response.ContactItemResp
-import com.devblock.network.api.response.ContactResp
+import kotlinx.coroutines.flow.Flow
+
 
 
 interface ContactApi {
 
-    suspend fun getUsers(): ContactResp
+    suspend fun getUsers(): Flow<PagingData<ContactItemResp>>
 }

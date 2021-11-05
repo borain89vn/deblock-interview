@@ -2,19 +2,17 @@ package com.devblock.adapter
 
 
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModel
-import com.devblock.BaseViewModel
+import com.devblock.base.BaseViewModel
 
 /**
  * Simplest implementation of [BaseAdapter] to use as initView single layout adapter.
  */
-open class SingleLayoutAdapter<T, B : ViewDataBinding>(
-        private val layoutId: Int,
-        items: List<T>,
-        viewModel: BaseViewModel? = null,
-        onBind: B.(Int) -> Unit = {}
-) : BaseAdapter<T, B>(viewModel = viewModel, items = items, onBind = onBind) {
+open class SingleLayoutAdapter<T : Any, B : ViewDataBinding>(
+    private val layoutId: Int,
+    items: List<T> = emptyList(),
+    onItemClicked: ((T) -> Unit)? = null,
+    onBind: B.(Int) -> Unit = {}
+) : BaseAdapter<T, B>(items = items, onItemClicked = onItemClicked, onBind = onBind) {
 
     override fun getLayoutId(position: Int): Int = layoutId
-
 }

@@ -1,13 +1,16 @@
 package com.devblock.network.impl.di
 
+import android.content.Context
 import com.devblock.network.api.*
 import com.devblock.network.impl.ApiService
 import com.devblock.network.impl.ExceptionCallAdapterFactory
+import com.devblock.network.impl.NetworkConnectionInterceptor
 import com.devblock.network.impl.api.*
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -36,10 +39,9 @@ internal interface NetworkModule {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ApiService::class.java)
-
         @Singleton
         @Provides
-        fun provideOkHttpClient(): OkHttpClient =
+        fun provideOkHttpClient(@ApplicationContext context: Context,): OkHttpClient =
             OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
@@ -48,6 +50,7 @@ internal interface NetworkModule {
                     HttpLoggingInterceptor()
                         .setLevel(HttpLoggingInterceptor.Level.BODY)
                 )
+                .addInterceptor(NetworkConnectionInterceptor(context))
                 .build()
     }
 }

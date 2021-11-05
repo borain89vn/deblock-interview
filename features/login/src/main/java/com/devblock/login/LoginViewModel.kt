@@ -2,9 +2,9 @@ package com.devblock.login
 
 import android.content.Context
 import androidx.lifecycle.*
+import com.devblock.base.BaseViewModel
 import com.devblock.db.api.ProfileRepository
 import com.devblock.db.api.models.Profile
-import com.devblock.login.model.LoginState
 import com.devblock.navigation.Navigator
 import com.devblock.navigation.api.model.Destination
 import com.devblock.preferences.api.DatastoreRepository
@@ -12,8 +12,6 @@ import com.devblock.preferences.api.DatastoreRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,11 +22,8 @@ internal class LoginViewModel @Inject constructor(
     private val datastore: DatastoreRepository,
     private val profileRepository: ProfileRepository,
     private val navigator: Navigator,
-) : ViewModel() {
+) : BaseViewModel() {
 
-    private val _state = MutableLiveData<LoginState>(LoginState.Idle)
-    val state: LiveData<LoginState>
-        get() = _state
 
 
     val userName: MutableLiveData<String> = MutableLiveData("")
@@ -48,12 +43,12 @@ internal class LoginViewModel @Inject constructor(
 
 
             if (userName?.isEmpty()){
-                _state.value = LoginState.Fail(context.getString(R.string.login_error_username_empty))
+                errorMessage.value = context.getString(R.string.login_error_username_empty)
                 return
             }
             if (password?.isEmpty()){
 
-                _state.value = LoginState.Fail(context.getString(R.string.login_error_password_empty))
+                errorMessage.value = context.getString(R.string.login_error_password_empty)
                 return
 
             }
@@ -62,15 +57,16 @@ internal class LoginViewModel @Inject constructor(
          if(userName == "devblock" && password == "2021") {
 
          }else {
-             _state.value = LoginState.Fail(context.getString(R.string.login_error_incorrect))
+             errorMessage.value = context.getString(R.string.login_error_incorrect)
 
              return
          }
 
 
 
-        viewModelScope.launch {
-            _state.value = LoginState.Loading
+        viewModelScope.launch(handlerException) {
+            progressLiveEvent.value = true
+
             delay(300)
 
                 datastore.saveUserName(userName)
@@ -81,8 +77,8 @@ internal class LoginViewModel @Inject constructor(
                        userName = userName
                     )
                 )
+                progressLiveEvent.value = false
 
-                _state.value = LoginState.Success
                 navigator.goTo(Destination.Welcome)
 
         }

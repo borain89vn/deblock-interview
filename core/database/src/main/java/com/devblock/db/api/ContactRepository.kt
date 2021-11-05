@@ -9,7 +9,7 @@ interface ContactRepository {
 
     suspend fun addToContact(contact: Contact)
     suspend fun updateContact(firstName: String?, email: String?)
-    fun getContacts(): List<Contact>
-    fun getContact(id:String): Contact
+    suspend fun getContacts(): List<Contact>
+    suspend fun getContact(id:String): Contact
 
 }

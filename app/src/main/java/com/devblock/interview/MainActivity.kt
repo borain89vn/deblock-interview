@@ -6,17 +6,22 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.navigation.findNavController
+import com.devblock.base.BaseActivity
+import com.devblock.interview.databinding.MainActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-internal class MainActivity : AppCompatActivity() {
+internal class MainActivity : BaseActivity<MainActivityBinding,MainViewModel> (){
 
     private val viewModel: NavigationViewModel by viewModels()
+    override val layoutId: Int
+        get() = R.layout.main_activity
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.main_activity)
-    }
+    override fun getVM(): MainViewModel  = MainViewModel()
+
+    override fun bindVM(binding: MainActivityBinding, vm: MainViewModel) = Unit
+
+
 
     override fun onStart() {
         super.onStart()

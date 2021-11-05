@@ -25,7 +25,12 @@
         android:label="MainFragment" />
     <action
         android:id="@+id/toWelcome"
-        app:destination="@id/welcomeFragment" />
+        app:destination="@id/welcomeFragment"
+        app:enterAnim="@anim/slide_in_top"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_top"
+        />
 
 
     <fragment
@@ -34,7 +39,12 @@
         android:label="CategoryFragment" />
     <action
         android:id="@+id/toContact"
-        app:destination="@id/contactFragment">
+        app:destination="@id/contactFragment"
+        app:enterAnim="@anim/slide_in_top"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_top"
+        >
         <argument
             android:name="id"
             app:argType="string" />
@@ -49,6 +59,7 @@
             android:name="avatar"
             app:argType="string"
             />
+
     </action>
 
 </navigation>

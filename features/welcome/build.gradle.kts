@@ -9,8 +9,10 @@ dependencies {
     implementation(project(":core:datastore"))
     implementation(project(":core:database"))
     implementation(project(":core:network"))
+    implementation(project(":core:utils"))
     implementation(project(":core:ui"))
     implementation(project(":navigation"))
+
 
     implementation(Libs.ANDROID_CORE)
     implementation(Libs.CIRCLE_IMAGEVIEW)

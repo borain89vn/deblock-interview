@@ -11,7 +11,7 @@
         type="com.devblock.contact.ContactViewModel" />
     <variable
         name="contact"
-        type="com.devblock.contact.model.ContactState.Contact" />
+        type="com.devblock.contact.ContactState.Contact" />
 
   </data>
   <androidx.constraintlayout.widget.ConstraintLayout

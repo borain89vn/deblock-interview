@@ -24,6 +24,6 @@ internal class DefaultContactRepository @Inject constructor(
         }
     }
 
-    override fun getContacts(): List<Contact>  = contactDao.getContacts()
-    override fun getContact(id: String): Contact = contactDao.getContact(id)
+    override suspend fun getContacts(): List<Contact>  = contactDao.getContacts()
+    override suspend fun getContact(id: String): Contact = contactDao.getContact(id)
 }

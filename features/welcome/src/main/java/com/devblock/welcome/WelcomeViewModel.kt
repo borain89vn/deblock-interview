@@ -1,37 +1,38 @@
 package com.devblock.welcome
 
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
-import com.devblock.BaseViewModel
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.insertSeparators
+import androidx.paging.map
+import com.devblock.base.BaseViewModel
 import com.devblock.db.api.models.Contact
 import com.devblock.navigation.Navigator
 import com.devblock.network.api.ContactApi
 import com.devblock.network.api.response.ContactItemResp
-
-import com.devblock.preferences.api.DatastoreRepository
-import com.ezyplanet.thousandhands.util.livedata.NonNullLiveData
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.devblock.db.DatabaseConstants
 import com.devblock.db.api.ContactRepository
 import com.devblock.db.api.ProfileRepository
 import com.devblock.navigation.api.model.Destination
-import com.devblock.network.api.response.ContactResp
-import com.devblock.welcome.model.WelcomeEvent
-import com.devblock.welcome.model.WelcomeState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.devblock.utils.paging.ItemComparable
+import com.devblock.welcome.model.ContactModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.withContext
 
 
 @HiltViewModel
+@SuppressLint("StaticFieldLeak")
 class WelcomeViewModel @Inject constructor(
-    private val datastore: DatastoreRepository,
+    @ApplicationContext private val context: Context,
     private val navigator: Navigator,
     private val contactRepository: ContactApi,
     private val contactDB: ContactRepository,
@@ -41,9 +42,7 @@ class WelcomeViewModel @Inject constructor(
 
 
 
-    private val _state = MutableLiveData<WelcomeState>()
-    val state: LiveData<WelcomeState>
-        get() = _state
+
 
     private val _filterState = MutableLiveData<Boolean>(false)
     val filterState: LiveData<Boolean>
@@ -53,42 +52,54 @@ class WelcomeViewModel @Inject constructor(
     var tempContacts : ArrayList<ContactItemResp>? = null
 
 
+
+    init {
+        getUsers()
+    }
+
+
+
+
     fun getUsers() {
-        viewModelScope.launch {
-            _state.value = WelcomeState.Loading
-            _state.value = try {
+        viewModelScope.launch (handlerException){
 
-                _state.value = WelcomeState.User(async(Dispatchers.IO){
-                    profileRepository?.profile()
-                }.await()?.userName)
+               progressLiveEvent.value = true
 
-                val contacts = async (Dispatchers.IO){ contactRepository.getUsers()?.items}
-                val localContacts = async(Dispatchers.IO) { contactDB.getContacts()}
-                val merge = mergeSource(contacts.await(),localContacts.await())
-                if(tempContacts == null){
-                    tempContacts = ArrayList(merge)
-                }
-                WelcomeState.Contacts(merge)
-            } catch (e: Exception) {
-                WelcomeState.Error(e.localizedMessage)
-            }
+//                  _state.value = WelcomeState.User(async(Dispatchers.IO) {
+//                      profileRepository?.profile()
+//                  }.await()?.userName)
+
+                  val contacts = async {
+                      getFlow()
+                  }
+//                val localContacts = async { contactDB.getContacts()}
+//                val merge = mergeSource(contacts.await(),localContacts.await())
+//                if(tempContacts == null){
+//                    tempContacts = ArrayList(merge)
+//                }
+                  // _state.value =  WelcomeState.Contacts(merge)
+                  _state.value = WelcomeState.Contacts(contacts.await())
+                 progressLiveEvent.value = false
+
+
+
         }
     }
 
-    fun onItemClicked(item: ContactItemResp) {
-        navigator.goTo(Destination.Contact(item.id,item.fullName(), item.email, item.avatar))
+    fun onItemClicked(item: ContactModel) {
+        //navigator.goTo(Destination.Contact(item.id,item.fullName(), item.email, item.avatar))
     }
 
     fun filterClick(){
         isFilter = !isFilter
         _filterState.value = isFilter
-        if(isFilter) {
-            _state.value =
-                WelcomeState.Contacts(tempContacts?.filter { it.email == DatabaseConstants.FILTER_EMAIL })
-        }else {
-            _state.value =
-                WelcomeState.Contacts(tempContacts)
-        }
+//        if(isFilter) {
+//            _state.value =
+//                WelcomeState.Contacts(tempContacts?.filter { it.email == DatabaseConstants.FILTER_EMAIL })
+//        }else {
+//            _state.value =
+//                WelcomeState.Contacts(tempContacts)
+//        }
     }
 
     private fun mergeSource(remoteSource:List<ContactItemResp>,localSource:List<Contact>) :List<ContactItemResp>{
@@ -106,22 +117,43 @@ class WelcomeViewModel @Inject constructor(
         }
 
     }
-    fun refreshData(id:String){
-        viewModelScope.launch {
-            _state.value = WelcomeState.Loading
-            _state.value = try {
+    fun refreshData(id: String) {
+        viewModelScope?.launch(handlerException) {
 
-                val contact = async(Dispatchers.IO) { contactDB.getContact(id)}
-                val merge = mergeSource(ArrayList(tempContacts), mutableListOf(contact.await()))
 
-                    tempContacts = ArrayList(merge)
+            val contact = contactDB.getContact(id)
+            val merge = mergeSource(ArrayList(tempContacts), mutableListOf(contact))
 
-                WelcomeState.Contacts(merge)
-            } catch (e: Exception) {
-                WelcomeState.Error(e.localizedMessage)
-            }
+
+            tempContacts = ArrayList(merge)
+
+          //  _state.value = WelcomeState.Contacts(merge)
+
+
         }
+
+
     }
+
+
+    private suspend fun getFlow(): Flow<PagingData<ContactModel>>{
+
+        val flow = contactRepository.getUsers()
+     return   flow.map { pagingData: PagingData<ContactItemResp> ->
+            pagingData.map { location ->
+                ContactModel.Data(location)
+            }.insertSeparators<ContactModel.Data, ContactModel> { before, after ->
+                when {
+                    before == null -> null
+                    after == null -> null
+                    else -> ContactModel.Seperator("Separator: $before-$after")
+                }
+            }
+        }.cachedIn(viewModelScope)
+    }
+
+
+
 
 
 }

@@ -20,7 +20,7 @@ internal interface ContactDao {
             ORDER BY updatedAt
         """
     )
-     fun getContacts(): List<Contact>
+     suspend fun getContacts(): List<Contact>
 
     @Query(
         """
@@ -31,7 +31,7 @@ internal interface ContactDao {
             ORDER BY updatedAt
         """
     )
-    fun getContact(id:String): Contact
+   suspend fun getContact(id:String): Contact
 
 
 

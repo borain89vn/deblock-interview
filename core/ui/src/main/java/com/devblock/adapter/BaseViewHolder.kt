@@ -2,7 +2,7 @@ package com.devblock.adapter
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.devblock.BaseViewModel
+import com.devblock.base.BaseViewModel
 
 
 
@@ -14,7 +14,15 @@ import com.devblock.BaseViewModel
  * @param binding an instance of [B] to get root view for [RecyclerView.ViewHolder] constructor and
  * display data model
  */
- open class BaseViewHolder<in T, out B : ViewDataBinding>(val binding: B) : RecyclerView.ViewHolder(binding.root) {
+ class BaseViewHolder<in T : Any, out B : ViewDataBinding>(
+    val binding: B,
+    onItemClicked: ((T) -> Unit)? = null
+) : RecyclerView.ViewHolder(binding.root) {
+    private lateinit var item: T
+
+    init {
+        itemView.setOnClickListener { onItemClicked?.invoke(item) }
+    }
 
     /**
      * binding method that bind data model to [ViewDataBinding] class
@@ -22,30 +30,9 @@ import com.devblock.BaseViewModel
      * @param itemBindingId Generated item binding id that will should be founded in BR class.
      * @param item an instance of [T] to be shown in layout
      */
-    fun bind(itemBindingId: Int, item: T, viewModelBindingId: Int, viewModel: BaseViewModel?) {
-
+    fun bind(itemBindingId: Int, item: T) {
+        this.item = item
         binding.setVariable(itemBindingId, item)
-
-
-            if (viewModel != null)
-                binding.setVariable(viewModelBindingId, viewModel)
-            binding.executePendingBindings()
-
-
-
-    }
-    fun bind( viewModelBindingId: Int, viewModel: BaseViewModel?) {
-
-        if (viewModel != null)
-            binding.setVariable(viewModelBindingId, viewModel)
         binding.executePendingBindings()
-
-
-
-
     }
-
-
-
-
 }
